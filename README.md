@@ -31,6 +31,18 @@ After adding a domain, addresses such as `hello@example.com` and `test@example.c
 
 Mailpass can receive mail but cannot send it. Attachment names, types, and sizes are saved, but the files themselves are not stored and cannot be downloaded.
 
+## Tech stack
+
+| Component | Technology |
+| --- | --- |
+| Backend | Python 3.11, FastAPI, Uvicorn; dependencies managed with uv |
+| SMTP server | aiosmtpd |
+| Database | SQLite via Python's built-in sqlite3 module |
+| Frontend | React 19, TypeScript 5 |
+| Styling and icons | Tailwind CSS 3.4, Lucide |
+| Frontend build | Bun 1.3, Vite 6 |
+| Deployment | Docker Compose, Nginx |
+
 ## Screenshots
 
 On desktop, messages open beside the mail list. On mobile, they open in a separate view. Click an image to see it at full size.

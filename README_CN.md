@@ -31,6 +31,18 @@
 
 只支持收件，不支持发信。附件只记录名称、类型和大小，不保存文件内容，也无法下载。
 
+## 技术栈
+
+| 部分 | 技术 |
+| --- | --- |
+| 后端 | Python 3.11、FastAPI、Uvicorn，使用 uv 管理依赖 |
+| SMTP 收件 | aiosmtpd |
+| 数据库 | SQLite，使用 Python 内置的 sqlite3 |
+| 前端 | React 19、TypeScript 5 |
+| 样式与图标 | Tailwind CSS 3.4、Lucide |
+| 前端构建 | Bun 1.3、Vite 6 |
+| 部署 | Docker Compose、Nginx |
+
 ## 界面预览
 
 电脑上可以在邮件列表旁查看正文，手机上则单独打开邮件。点击图片查看原图。

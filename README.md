@@ -6,6 +6,7 @@
 
 <p>
   <a href="https://github.com/1273082756/Mailpass/releases/latest"><img src="https://img.shields.io/github/v/release/1273082756/Mailpass?style=flat-square&amp;color=3375ed" alt="Latest release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="MIT License"></a>
   <img src="https://img.shields.io/badge/React-19-149eca?style=flat-square" alt="React 19">
   <img src="https://img.shields.io/badge/Python-3.11-3776ab?style=flat-square" alt="Python 3.11">
   <img src="https://img.shields.io/badge/Docker-amd64%20%7C%20arm64-2496ed?style=flat-square" alt="Docker amd64 and arm64">
@@ -187,6 +188,10 @@ docker-compose.yml        Docker Compose configuration for source builds
 ```
 
 Bug reports, feature requests, and pull requests are welcome.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE). You can use, modify, fork, and distribute it, including for commercial purposes. Keep the original copyright notice and license text when distributing copies or modified versions.
 
 ## Star History
 

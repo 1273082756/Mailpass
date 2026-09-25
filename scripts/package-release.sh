@@ -15,7 +15,7 @@ bundle_dir="$staging_dir/$bundle_name"
 mkdir "$bundle_dir"
 
 sed "s/__VERSION__/$release_tag/g" "$repo_dir/deploy/compose.yml" > "$bundle_dir/compose.yml"
-cp "$repo_dir/.env.example" "$repo_dir/deploy/start.sh" "$bundle_dir/"
+cp "$repo_dir/.env.example" "$repo_dir/deploy/start.sh" "$repo_dir/LICENSE" "$bundle_dir/"
 cp "$repo_dir/deploy/README.md" "$bundle_dir/README.md"
 printf '%s\n' "$release_arch" > "$bundle_dir/ARCH"
 printf '%s\n' "$release_tag" > "$bundle_dir/VERSION"

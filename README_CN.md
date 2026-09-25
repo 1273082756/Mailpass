@@ -6,6 +6,7 @@
 
 <p>
   <a href="https://github.com/1273082756/Mailpass/releases/latest"><img src="https://img.shields.io/github/v/release/1273082756/Mailpass?style=flat-square&amp;color=3375ed" alt="Latest release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="MIT License"></a>
   <img src="https://img.shields.io/badge/React-19-149eca?style=flat-square" alt="React 19">
   <img src="https://img.shields.io/badge/Python-3.11-3776ab?style=flat-square" alt="Python 3.11">
   <img src="https://img.shields.io/badge/Docker-amd64%20%7C%20arm64-2496ed?style=flat-square" alt="Docker amd64 and arm64">
@@ -187,6 +188,10 @@ docker-compose.yml        源码部署配置
 ```
 
 遇到问题或有功能建议，欢迎提 Issue，也欢迎提交 PR。
+
+## 开源协议
+
+本项目采用 [MIT 许可证](LICENSE)。你可以自由使用、修改、fork 和商用，也可以分发修改后的版本。分发时请保留原版权声明和许可证文本。
 
 ## Star 趋势
 

@@ -1,8 +1,7 @@
 <div align="center">
 
 <h1>Mailpass</h1>
-<p><strong>所有地址，一个收件箱。</strong></p>
-<p>轻量、私密、只收件的个人临时邮箱。</p>
+<p>一个可以自部署的临时邮箱，使用自己的域名收件。</p>
 <p><a href="README.md">English</a> · <a href="#快速开始">快速开始</a> · <a href="https://github.com/1273082756/Mailpass/releases/latest">下载最新版本</a> · <a href="docs/RELEASING.md">发布指南</a></p>
 
 <p>
@@ -14,49 +13,48 @@
 
 </div>
 
-配置收件域名后，任意前缀地址都可以直接使用。Mailpass 将所有来信统一收录，支持搜索、按地址筛选与未读管理，邮件持久保存在自己的服务器上。
+配置好域名后，`hello@example.com`、`test@example.com` 这样的地址都能直接收件，不用逐个创建。所有邮件放在同一个收件箱中，保存在你自己的服务器上。
 
-![Mailpass 桌面收件箱：浅色与深色模式斜切拼接](img/showcase-desktop.png)
+![Mailpass 收件箱，左侧浅色主题，右侧深色主题](img/showcase-desktop.png)
 
-<p align="center"><a href="img/inbox-desktop.png">浅色原图</a> · <a href="img/inbox-dark.png">深色原图</a></p>
+<p align="center"><a href="img/inbox-desktop.png">浅色主题</a> · <a href="img/inbox-dark.png">深色主题</a></p>
 
-> 截图中的邮件与地址为演示内容。桌面截图均为 1600 × 900（16:9），主图由同一界面的浅色与深色截图斜切拼接。
+> 截图使用演示邮件和示例地址。
 
-## 特性
+## 功能
 
-- **地址随用随收**：支持多个域名和任意地址前缀，无需提前创建邮箱。
-- **来信集中管理**：搜索发件人、主题或正文，按收件地址、未读状态筛选，支持分页和删除。
-- **刷新节奏可控**：倒计时、一键刷新，支持 5 秒 / 15 秒 / 30 秒 / 1 分钟 / 5 分钟或关闭，浏览器自动记住设置。
-- **桌面手机都顺手**：分栏与全屏阅读、深浅色模式、可配置站点名称。
-- **私密访问**：统一访问密钥，HTML 邮件使用 sandbox iframe 隔离预览。
-- **部署依赖少**：SQLite 存储，Docker 数据卷持久化，提供 amd64 / arm64 离线部署包。
+- **多域名收件**：支持多个域名，任意地址前缀都能收件，无需提前创建邮箱。
+- **邮件管理**：支持搜索，按收件地址和未读状态筛选。
+- **界面**：支持电脑和手机访问，可切换深浅色主题。
+- **访问控制**：使用访问密钥登录。
+- **部署**：提供 amd64 / arm64 的 Docker 离线包，邮件存储在 SQLite 中，通过数据卷保存。
 
-仅收件，不提供发信能力。附件只保存名称、类型和大小，暂不支持下载。
+只支持收件，不支持发信。附件只记录名称、类型和大小，不保存文件内容，也无法下载。
 
-## 桌面与移动端
+## 界面预览
 
-桌面分栏阅读，手机全屏查看同一封来信。点击图片可查看原图。
+电脑上可以在邮件列表旁查看正文，手机上则单独打开邮件。点击图片查看原图。
 
 <table>
-  <tr><th width="79%">桌面阅读 · 1600 × 900</th><th width="21%">手机阅读 · 390 × 844</th></tr>
+  <tr><th width="79%">桌面端</th><th width="21%">手机端</th></tr>
   <tr>
-    <td valign="top"><a href="img/reader-desktop.png"><img src="img/reader-desktop.png" width="100%" alt="Mailpass 桌面端邮件列表与正文分栏阅读"></a></td>
-    <td valign="top"><a href="img/reader-mobile.png"><img src="img/reader-mobile.png" width="100%" alt="Mailpass 手机端全屏邮件阅读"></a></td>
+    <td valign="top"><a href="img/reader-desktop.png"><img src="img/reader-desktop.png" width="100%" alt="桌面端邮件阅读页面"></a></td>
+    <td valign="top"><a href="img/reader-mobile.png"><img src="img/reader-mobile.png" width="100%" alt="手机端邮件阅读页面"></a></td>
   </tr>
 </table>
 
 <details>
-<summary>更多界面：刷新频率、手机收件箱与登录页</summary>
+<summary>更多截图</summary>
 
 <table>
-  <tr><th width="79%">深色模式与刷新频率</th><th width="21%">手机收件箱</th></tr>
+  <tr><th width="79%">桌面收件箱</th><th width="21%">手机收件箱</th></tr>
   <tr>
-    <td valign="top"><a href="img/refresh-settings.png"><img src="img/refresh-settings.png" width="100%" alt="深色模式下的一体式刷新按钮与频率下拉菜单"></a></td>
-    <td valign="top"><a href="img/inbox-mobile.png"><img src="img/inbox-mobile.png" width="100%" alt="手机端收件箱概览、搜索与邮件列表"></a></td>
+    <td valign="top"><a href="img/inbox-dark.png"><img src="img/inbox-dark.png" width="100%" alt="深色主题的桌面收件箱"></a></td>
+    <td valign="top"><a href="img/inbox-mobile.png"><img src="img/inbox-mobile.png" width="100%" alt="手机收件箱"></a></td>
   </tr>
 </table>
 
-![访问密钥登录页](img/login.png)
+![登录页](img/login.png)
 
 </details>
 
@@ -68,12 +66,12 @@
 
 从 [Releases](https://github.com/1273082756/Mailpass/releases/latest) 下载对应架构的部署包和 `.sha256` 校验文件：
 
-| 服务器架构 | 选择的部署包 |
+| 服务器架构 | 部署包 |
 | --- | --- |
 | Intel / AMD，`x86_64` / `amd64` | `mailpass-<版本>-linux-amd64.tar.gz` |
 | ARM，`aarch64` / `arm64` | `mailpass-<版本>-linux-arm64.tar.gz` |
 
-包内包含前后端镜像，无需安装 Python、Node.js 或从镜像仓库下载。GitHub 自动生成的 **Source code** 是源码包，请选择上表中的部署包。
+包内已包含前后端的 Docker 镜像，不需要安装 Python 或 Node.js，也不需要另外拉取镜像。下载时选择上表中的部署包，**Source code** 是 GitHub 自动生成的源码压缩包。
 
 以 `v1.0.0` 的 amd64 包为例：
 
@@ -86,7 +84,7 @@ cp .env.example .env
 bash start.sh
 ```
 
-打开 **`http://服务器IP:8080`**。未手动设置 `ACCESS_KEY` 时，从后端日志获取自动生成的访问密钥：
+启动后打开 **`http://服务器IP:8080`**。如果没有设置 `ACCESS_KEY`，可以在后端日志中找到自动生成的访问密钥：
 
 ```bash
 docker compose logs backend
@@ -129,7 +127,7 @@ example.com.       MX   10 mail.example.com.
 | `MAX_MESSAGE_SIZE` | `15728640` | 单封邮件上限，默认 15 MiB |
 | `CORS_ORIGINS` | `*` | API 允许的来源 |
 
-Compose 启动需要 `.env`，且 `MAIL_DOMAINS` 不能为空。自动生成的密钥保存在数据卷中的 `/data/.access_key`，重启后复用。不要将 `.env`、密钥或真实邮件数据提交到仓库；公网 Web 访问建议配置 HTTPS。
+使用 Docker Compose 启动时，需要先创建 `.env` 并填写 `MAIL_DOMAINS`。自动生成的密钥保存在数据卷中的 `/data/.access_key`，重启后仍然有效。不要将 `.env`、密钥或真实邮件数据提交到仓库。通过公网访问网页时，建议配置 HTTPS。
 
 ## 数据与维护
 
@@ -167,16 +165,16 @@ bun run dev
 
 ```text
 backend/                  SMTP 收件、邮件解析、SQLite 与 FastAPI
-frontend/                 React + TypeScript 工作台
-img/                      桌面、移动端与主题展示图
+frontend/                 Web 前端（React + TypeScript）
+img/                      README 截图
 deploy/                   离线部署模板和启动脚本
 scripts/                  打包与部署验证脚本
 .github/workflows/        GitHub Actions 发布流程
 docs/                     维护与发布文档
-docker-compose.yml        从源码构建的服务编排
+docker-compose.yml        源码部署配置
 ```
 
-欢迎提交 Issue 和 Pull Request。请保持改动聚焦，并附上简短的验证说明。
+遇到问题或有功能建议，欢迎提 Issue，也欢迎提交 PR。
 
 ## Star 趋势
 

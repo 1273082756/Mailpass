@@ -1,8 +1,7 @@
 <div align="center">
 
 <h1>Mailpass</h1>
-<p><strong>Every address. One inbox.</strong></p>
-<p>A lightweight, private, receive-only mailbox.</p>
+<p>A self-hosted temporary mailbox for your own domains.</p>
 <p><a href="README_CN.md">简体中文</a> · <a href="#quick-start">Quick start</a> · <a href="https://github.com/1273082756/Mailpass/releases/latest">Latest release</a> · <a href="docs/RELEASING.md">Release guide</a></p>
 
 <p>
@@ -14,49 +13,48 @@
 
 </div>
 
-Use any address under your configured domains without creating a mailbox first. Mailpass collects every message in one private inbox, with search, address filters, and unread management. Your messages stay on your own server.
+After adding a domain, addresses such as `hello@example.com` and `test@example.com` can receive mail without being created individually. All messages go to one inbox and are stored on your own server.
 
-![Mailpass desktop inbox with a diagonal split between light and dark modes](img/showcase-desktop.png)
+![Mailpass inbox, with the light theme on the left and dark theme on the right](img/showcase-desktop.png)
 
-<p align="center"><a href="img/inbox-desktop.png">Light original</a> · <a href="img/inbox-dark.png">Dark original</a></p>
+<p align="center"><a href="img/inbox-desktop.png">Light theme</a> · <a href="img/inbox-dark.png">Dark theme</a></p>
 
-> Messages and addresses shown are illustrative. Desktop captures are 1600 × 900 (16:9); the cover combines light and dark screenshots of the same interface with a diagonal split.
+> Screenshots use sample messages and addresses.
 
 ## Features
 
-- **Use any address** — Multiple domains and arbitrary local parts, with no mailbox registration.
-- **One organized inbox** — Search sender, subject, or body; filter by recipient or unread state; paginate and delete messages.
-- **Refresh at your pace** — A countdown and manual refresh button, with 5s / 15s / 30s / 1m / 5m intervals or off. Preferences stay in your browser.
-- **Desktop and mobile** — Split-pane and full-screen reading, light and dark modes, and a configurable site name.
-- **Private access** — A shared access key and sandboxed iframe previews for HTML mail.
-- **Simple deployment** — SQLite storage, persistent Docker volumes, and offline packages for amd64 and arm64.
+- **Catch-all mail**: Receive mail at any address across multiple domains without creating individual mailboxes.
+- **Mail management**: Search messages and filter by recipient or unread status.
+- **Web interface**: Desktop and mobile support, with light and dark themes.
+- **Access control**: Sign in with a shared access key.
+- **Deployment**: Offline Docker packages for amd64 and arm64, with mail stored in SQLite on a persistent volume.
 
-Mailpass only receives mail. Attachments retain their name, type, and size; their contents are not stored or downloadable.
+Mailpass can receive mail but cannot send it. Attachment names, types, and sizes are saved, but the files themselves are not stored and cannot be downloaded.
 
-## Desktop and mobile
+## Screenshots
 
-Read mail beside your inbox on desktop, or open it full-screen on your phone. Click an image for the original resolution.
+On desktop, messages open beside the mail list. On mobile, they open in a separate view. Click an image to see it at full size.
 
 <table>
-  <tr><th width="79%">Desktop reader · 1600 × 900</th><th width="21%">Mobile reader · 390 × 844</th></tr>
+  <tr><th width="79%">Desktop</th><th width="21%">Mobile</th></tr>
   <tr>
-    <td valign="top"><a href="img/reader-desktop.png"><img src="img/reader-desktop.png" width="100%" alt="Mailpass desktop inbox with a split-pane message reader"></a></td>
-    <td valign="top"><a href="img/reader-mobile.png"><img src="img/reader-mobile.png" width="100%" alt="Mailpass full-screen message reader on mobile"></a></td>
+    <td valign="top"><a href="img/reader-desktop.png"><img src="img/reader-desktop.png" width="100%" alt="Desktop message reader"></a></td>
+    <td valign="top"><a href="img/reader-mobile.png"><img src="img/reader-mobile.png" width="100%" alt="Mobile message reader"></a></td>
   </tr>
 </table>
 
 <details>
-<summary>More views: refresh settings, mobile inbox, and sign-in</summary>
+<summary>More screenshots</summary>
 
 <table>
-  <tr><th width="79%">Dark mode and refresh settings</th><th width="21%">Mobile inbox</th></tr>
+  <tr><th width="79%">Desktop inbox</th><th width="21%">Mobile inbox</th></tr>
   <tr>
-    <td valign="top"><a href="img/refresh-settings.png"><img src="img/refresh-settings.png" width="100%" alt="Dark inbox with the refresh interval menu open"></a></td>
-    <td valign="top"><a href="img/inbox-mobile.png"><img src="img/inbox-mobile.png" width="100%" alt="Mobile inbox overview, search, and message list"></a></td>
+    <td valign="top"><a href="img/inbox-dark.png"><img src="img/inbox-dark.png" width="100%" alt="Desktop inbox in the dark theme"></a></td>
+    <td valign="top"><a href="img/inbox-mobile.png"><img src="img/inbox-mobile.png" width="100%" alt="Mobile inbox"></a></td>
   </tr>
 </table>
 
-![Access-key sign-in](img/login.png)
+![Sign-in page](img/login.png)
 
 </details>
 
@@ -73,7 +71,7 @@ Download the package for your architecture and its `.sha256` file from [Releases
 | Intel / AMD, `x86_64` / `amd64` | `mailpass-<version>-linux-amd64.tar.gz` |
 | ARM, `aarch64` / `arm64` | `mailpass-<version>-linux-arm64.tar.gz` |
 
-Both container images are included. No Python, Node.js, build tools, or registry downloads are needed. Choose one of the packages above; GitHub's automatically generated **Source code** archives contain source files.
+The package includes both Docker images, so you don't need to install Python or Node.js, or pull images from a registry. Download a deployment package from the table above; GitHub's **Source code** archives contain only the source files.
 
 For example, with the `v1.0.0` amd64 package:
 
@@ -86,7 +84,7 @@ cp .env.example .env
 bash start.sh
 ```
 
-Open **`http://SERVER_IP:8080`**. If `ACCESS_KEY` is not configured, find the generated key in the backend log:
+Once the containers are running, open **`http://SERVER_IP:8080`**. If you haven't set `ACCESS_KEY`, you can find the generated key in the backend log:
 
 ```bash
 docker compose logs backend
@@ -129,7 +127,7 @@ Set `MAIL_DOMAINS=example.com` and allow **inbound TCP port 25** in your cloud s
 | `MAX_MESSAGE_SIZE` | `15728640` | Maximum message size; 15 MiB by default |
 | `CORS_ORIGINS` | `*` | Allowed API origins |
 
-Compose requires `.env` and a non-empty `MAIL_DOMAINS`. Generated keys are saved at `/data/.access_key` in the data volume and reused after restarts. Keep `.env`, access keys, and real mail data out of version control. Use HTTPS for public web access.
+Before starting Docker Compose, create `.env` and set `MAIL_DOMAINS`. Generated keys are saved at `/data/.access_key` in the data volume and remain valid after restarts. Keep `.env`, access keys, and real mail data out of version control. Use HTTPS when accessing the web interface over the internet.
 
 ## Data and maintenance
 
@@ -167,16 +165,16 @@ Vite proxies `/api` to `http://127.0.0.1:8000`. Run `bun run typecheck` and `bun
 
 ```text
 backend/                  SMTP receiving, mail parsing, SQLite, and FastAPI
-frontend/                 React + TypeScript workspace
-img/                      Desktop, mobile, and theme screenshots
+frontend/                 Web frontend (React + TypeScript)
+img/                      README screenshots
 deploy/                   Offline deployment templates and startup script
 scripts/                  Packaging and deployment checks
 .github/workflows/        GitHub Actions release workflow
 docs/                     Maintenance and publishing documentation
-docker-compose.yml        Build-from-source service configuration
+docker-compose.yml        Docker Compose configuration for source builds
 ```
 
-Issues and pull requests are welcome. Keep changes focused and include a short validation note.
+Bug reports, feature requests, and pull requests are welcome.
 
 ## Star History
 

@@ -10,13 +10,19 @@ Mailpass 会接收配置域名下任意地址的邮件，并统一收录到一�
 
 - 只收件 SMTP 服务，支持多个域名和任意前缀地址
 - 解析发件人、收件人、主题、纯文本、HTML 和附件信息
-- 支持搜索、未读筛选、地址聚合、分页和自动刷新
+- 支持搜索、未读筛选、地址聚合、分页和可设置频率的自动刷新倒计时
 - 响应式 React 工作台、深色模式和移动端阅读
 - 可选记住访问密钥，仅保存在当前浏览器
 - 访问密钥鉴权，HTML 邮件使用 sandbox iframe 隔离预览
 - SQLite 数据通过 Docker volume 持久化
 
 ## 🚀 快速开始
+
+可从 [Releases](https://github.com/1273082756/Mailpass/releases) 下载 `linux-amd64` 或
+`linux-arm64` 离线部署包，按包内 README 配置后运行 `bash start.sh`。包内包含已构建镜像，
+服务器只需 Docker 和 Compose v2。维护者的 Actions 配置与发布点击步骤见 [发布指南](docs/RELEASING.md)。
+
+从源码构建：
 
 ```bash
 cp .env.example .env

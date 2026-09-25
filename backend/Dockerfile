@@ -1,4 +1,5 @@
-FROM dockerproxy.net/astral/uv:python3.11-bookworm-slim
+ARG UV_IMAGE=dockerproxy.net/astral/uv:python3.11-bookworm-slim
+FROM ${UV_IMAGE}
 
 WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1 \

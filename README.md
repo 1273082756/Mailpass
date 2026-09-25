@@ -10,13 +10,20 @@ Mailpass accepts messages sent to any address under your configured domains and 
 
 - Receive-only SMTP service for multiple domains and arbitrary local parts
 - Parsed sender, recipients, subject, plain text, HTML, and attachment metadata
-- Inbox search, unread filtering, address aggregation, pagination, and auto-refresh
+- Inbox search, unread filtering, address aggregation, pagination, and a configurable auto-refresh countdown
 - Responsive React workspace with dark mode and mobile mail reading
 - Optional remembered access key, stored only in the current browser
 - Access-key authentication and sandboxed HTML previews
 - SQLite persistence through a Docker volume
 
 ## 🚀 Quick start
+
+Download a `linux-amd64` or `linux-arm64` offline deployment package from
+[Releases](https://github.com/1273082756/Mailpass/releases), configure it using the bundled README,
+and run `bash start.sh`. Images are included; the server only needs Docker and Compose v2.
+Maintainer setup and release instructions are in the [release guide](docs/RELEASING.md) (Chinese).
+
+To build from source:
 
 ```bash
 cp .env.example .env

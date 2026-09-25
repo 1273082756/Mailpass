@@ -1,5 +1,14 @@
 export const API = '/api'
 export const PAGE_SIZE = 50
+export const DEFAULT_REFRESH_INTERVAL = 15
+export const REFRESH_INTERVALS = [
+  { seconds: 5, label: '每 5 秒' },
+  { seconds: 15, label: '每 15 秒' },
+  { seconds: 30, label: '每 30 秒' },
+  { seconds: 60, label: '每 1 分钟' },
+  { seconds: 300, label: '每 5 分钟' },
+  { seconds: 0, label: '关闭自动刷新' },
+]
 export type StorageName = 'localStorage' | 'sessionStorage'
 export type Notify = (message: string, error?: boolean) => void
 export interface Attachment { name: string; type?: string; size: number }

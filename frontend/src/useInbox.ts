@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { InboxData } from './lib'
-import { API, PAGE_SIZE } from './lib'
+import { API, DEFAULT_REFRESH_INTERVAL, PAGE_SIZE, REFRESH_INTERVALS, readStorage, writeStorage } from './lib'
 
 interface UseInboxProps { accessKey: string; onLogout: () => void; query: string; address: string; unreadOnly: boolean; page: number }
 export function useInbox({ accessKey, onLogout, query, address, unreadOnly, page }: UseInboxProps) {
@@ -9,6 +9,11 @@ export function useInbox({ accessKey, onLogout, query, address, unreadOnly, page
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState('')
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+  const [refreshInterval, setRefreshInterval] = useState(() => {
+    const saved = readStorage('localStorage', 'tempmail-refresh-interval')
+    return REFRESH_INTERVALS.find((option) => String(option.seconds) === saved)?.seconds ?? DEFAULT_REFRESH_INTERVAL
+  })
+  const [nextRefreshAt, setNextRefreshAt] = useState<number | null>(null)
   const requestRef = useRef<AbortController | null>(null)
 
   const api = useCallback(async (path: string, options: RequestInit = {}) => {
@@ -47,9 +52,33 @@ export function useInbox({ accessKey, onLogout, query, address, unreadOnly, page
 
   useEffect(() => {
     refresh()
-    const timer = window.setInterval(() => { if (!document.hidden) refresh(true) }, 15000)
-    return () => { window.clearInterval(timer); requestRef.current?.abort() }
+    return () => requestRef.current?.abort()
   }, [refresh])
 
-  return { ...data, api, refresh, loading, refreshing, error, lastUpdated }
+  useEffect(() => {
+    writeStorage('localStorage', 'tempmail-refresh-interval', String(refreshInterval))
+  }, [refreshInterval])
+
+  useEffect(() => {
+    if (!refreshInterval || loading || refreshing) { setNextRefreshAt(null); return }
+    const deadline = Date.now() + refreshInterval * 1000
+    setNextRefreshAt(deadline)
+    let timer: number | undefined
+    let started = false
+    function tick() {
+      window.clearTimeout(timer)
+      if (started || document.hidden) return
+      const delay = deadline - Date.now()
+      if (delay > 0) timer = window.setTimeout(tick, delay)
+      else { started = true; void refresh(true) }
+    }
+    tick()
+    document.addEventListener('visibilitychange', tick)
+    return () => {
+      window.clearTimeout(timer)
+      document.removeEventListener('visibilitychange', tick)
+    }
+  }, [refreshInterval, loading, refreshing, refresh])
+
+  return { ...data, api, refresh, loading, refreshing, error, lastUpdated, refreshInterval, setRefreshInterval, nextRefreshAt }
 }

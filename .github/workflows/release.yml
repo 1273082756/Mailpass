@@ -1,0 +1,140 @@
+name: Release packages
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag (for example v1.0.0)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.event.release.tag_name || inputs.tag }}
+  cancel-in-progress: false
+
+env:
+  RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+
+jobs:
+  check:
+    if: >-
+      github.event_name != 'release' ||
+      !contains(github.event.release.assets.*.name, format('mailpass-{0}-linux-amd64.tar.gz', github.event.release.tag_name)) ||
+      !contains(github.event.release.assets.*.name, format('mailpass-{0}-linux-amd64.tar.gz.sha256', github.event.release.tag_name)) ||
+      !contains(github.event.release.assets.*.name, format('mailpass-{0}-linux-arm64.tar.gz', github.event.release.tag_name)) ||
+      !contains(github.event.release.assets.*.name, format('mailpass-{0}-linux-arm64.tar.gz.sha256', github.event.release.tag_name))
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Validate version
+        shell: bash
+        run: |
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.-]+)?$ ]] || {
+            echo 'Use a version such as v1.0.0 or v1.0.0-rc.1.' >&2
+            exit 1
+          }
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/tags/${{ env.RELEASE_TAG }}
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+      - name: Check frontend
+        working-directory: frontend
+        run: |
+          bun install --frozen-lockfile
+          bun run typecheck
+          bun run build
+
+  build:
+    needs: check
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/tags/${{ env.RELEASE_TAG }}
+      - uses: docker/setup-buildx-action@v3
+      - name: Build backend
+        uses: docker/build-push-action@v6
+        with:
+          context: backend
+          platforms: linux/${{ matrix.arch }}
+          load: true
+          tags: mailpass-backend:${{ env.RELEASE_TAG }}
+          build-args: UV_IMAGE=ghcr.io/astral-sh/uv:python3.11-bookworm-slim
+          cache-from: type=gha,scope=backend-${{ matrix.arch }}
+          cache-to: type=gha,mode=max,scope=backend-${{ matrix.arch }}
+      - name: Build frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: frontend
+          platforms: linux/${{ matrix.arch }}
+          load: true
+          tags: mailpass-frontend:${{ env.RELEASE_TAG }}
+          build-args: |
+            BUN_IMAGE=docker.io/oven/bun:1.3.14-alpine
+            NGINX_IMAGE=docker.io/library/nginx:alpine
+          cache-from: type=gha,scope=frontend-${{ matrix.arch }}
+          cache-to: type=gha,mode=max,scope=frontend-${{ matrix.arch }}
+      - name: Package offline deployment
+        env:
+          RELEASE_ARCH: ${{ matrix.arch }}
+        run: bash scripts/package-release.sh "$RELEASE_TAG" "$RELEASE_ARCH" "$RUNNER_TEMP/release-assets"
+      - name: Test packaged deployment
+        env:
+          RELEASE_ARCH: ${{ matrix.arch }}
+          SMTP_PORT: '0'
+          WEB_PORT: '0'
+          ACCESS_KEY: ci-smoke-test-key
+        run: |
+          mkdir "$RUNNER_TEMP/release-smoke"
+          tar -xzf "$RUNNER_TEMP/release-assets/mailpass-$RELEASE_TAG-linux-$RELEASE_ARCH.tar.gz" -C "$RUNNER_TEMP/release-smoke" --strip-components=1
+          cd "$RUNNER_TEMP/release-smoke"
+          cp .env.example .env
+          bash start.sh
+          web_address=$(docker compose port frontend 80 | head -n 1)
+          smtp_address=$(docker compose port backend 2525 | head -n 1)
+          python3 "$GITHUB_WORKSPACE/scripts/smoke-release.py" "${web_address##*:}" "${smtp_address##*:}"
+      - name: Deployment logs and cleanup
+        if: always()
+        run: |
+          if [ -f "$RUNNER_TEMP/release-smoke/compose.yml" ]; then
+            cd "$RUNNER_TEMP/release-smoke"
+            docker compose logs --no-color
+            docker compose down --volumes
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-linux-${{ matrix.arch }}
+          path: ${{ runner.temp }}/release-assets/*
+          if-no-files-found: error
+          retention-days: 7
+
+  upload:
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-linux-*
+          merge-multiple: true
+          path: release-assets
+      - name: Attach packages to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh release upload "$RELEASE_TAG" release-assets/* --clobber

@@ -4,8 +4,8 @@ import { ArrowRight, Eye, EyeOff, KeyRound, LoaderCircle, LockKeyhole, Mail, Shi
 import { API, readStorage, writeStorage } from '../lib'
 import { Brand, IconButton, ThemeButton } from './ui'
 
-interface LoginProps { onAuthenticated: (key: string, remember: boolean) => void; dark: boolean; onToggleTheme: () => void }
-export default function Login({ onAuthenticated, dark, onToggleTheme }: LoginProps) {
+interface LoginProps { onAuthenticated: (key: string, remember: boolean) => void; dark: boolean; onToggleTheme: () => void; siteName: string }
+export default function Login({ onAuthenticated, dark, onToggleTheme, siteName }: LoginProps) {
   const [key, setKey] = useState(() => readStorage('localStorage', 'tempmail-remember-key'))
   const [remember, setRemember] = useState(() => Boolean(readStorage('localStorage', 'tempmail-remember-key')))
   const [visible, setVisible] = useState(false)
@@ -28,7 +28,7 @@ export default function Login({ onAuthenticated, dark, onToggleTheme }: LoginPro
 
   return <main className="login-layout">
     <section className="login-main">
-      <header className="login-header"><Brand /><ThemeButton dark={dark} onToggle={onToggleTheme} /></header>
+      <header className="login-header"><Brand name={siteName} /><ThemeButton dark={dark} onToggle={onToggleTheme} /></header>
       <div className="login-form-wrap">
         <div className="login-lock"><LockKeyhole size={25} strokeWidth={1.5} /></div>
         <div className="eyebrow">YOUR PRIVATE MAILROOM</div>
@@ -43,7 +43,7 @@ export default function Login({ onAuthenticated, dark, onToggleTheme }: LoginPro
         </form>
         <div className="login-note"><ShieldCheck size={15} />私密访问 · 无需注册邮箱</div>
       </div>
-      <footer className="login-footer"><span>Mailpass</span><span>Simple receiving, zero noise.</span></footer>
+      <footer className="login-footer"><span>{siteName}</span><span>Simple receiving, zero noise.</span></footer>
     </section>
     <section className="login-showcase" aria-label="产品介绍">
       <div className="showcase-top"><span className="small-caps">LESS NOISE. MORE FOCUS.</span><span className="showcase-pill"><span className="status-dot" />为简单而设计</span></div>

@@ -40,6 +40,7 @@ The default SMTP port is `25`. Make sure it is allowed by your cloud security gr
 | Variable | Default | Description |
 | --- | --- | --- |
 | `MAIL_DOMAINS` | `mail.example.com,example.com` | Comma-separated receiving domains |
+| `SITE_NAME` | `Mailpass` | Name shown in the web UI and browser title; empty values fall back to `Mailpass` |
 | `ACCESS_KEY` | generated | Web/API access key; generated when empty |
 | `WEB_PORT` | `8080` | Published web port |
 | `SMTP_PORT` | `25` | Published SMTP port |

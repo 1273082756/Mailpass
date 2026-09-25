@@ -3,10 +3,10 @@ import type { InboxData } from '../lib'
 import { cn } from '../lib'
 import { Brand, IconButton, ThemeButton } from './ui'
 
-interface SidebarProps { data: InboxData; address: string; unreadOnly: boolean; onNavigate: (address?: string, unreadOnly?: boolean) => void; onLogout: () => void; dark: boolean; onToggleTheme: () => void }
-export default function Sidebar({ data, address, unreadOnly, onNavigate, onLogout, dark, onToggleTheme }: SidebarProps) {
+interface SidebarProps { data: InboxData; address: string; unreadOnly: boolean; onNavigate: (address?: string, unreadOnly?: boolean) => void; onLogout: () => void; dark: boolean; onToggleTheme: () => void; siteName: string }
+export default function Sidebar({ data, address, unreadOnly, onNavigate, onLogout, dark, onToggleTheme, siteName }: SidebarProps) {
   return <div className="sidebar-content">
-    <div className="sidebar-brand"><Brand /></div>
+    <div className="sidebar-brand"><Brand name={siteName} /></div>
     <div className="workspace-label"><span className="workspace-avatar">白</span><div><strong>我的工作空间</strong><span>个人邮箱管理</span></div><ShieldCheck size={16} /></div>
     <div className="sidebar-section-label">工作空间</div>
     <nav className="sidebar-nav" aria-label="邮箱导航">
@@ -19,7 +19,7 @@ export default function Sidebar({ data, address, unreadOnly, onNavigate, onLogou
     </nav>
     <div className="sidebar-bottom">
       <div className="domain-panel"><div><Globe2 size={15} /><span>接收域名</span><span className={cn('status-dot', !data.config.smtp_enabled && 'status-muted')} /></div>{data.config.domains?.map((domain) => <span className="domain-name" key={domain}>{domain}</span>)}{!data.config.domains?.length && <span className="domain-name">等待连接…</span>}<p><Circle size={5} fill="currentColor" />任意地址，无需预先创建</p></div>
-      <div className="sidebar-account"><span className="account-avatar">M</span><div><strong>Mailpass</strong><span>Personal inbox</span></div><ThemeButton dark={dark} onToggle={onToggleTheme} /><IconButton label="退出登录" onClick={onLogout}><LogOut size={16} /></IconButton></div>
+      <div className="sidebar-account"><span className="account-avatar">{siteName.slice(0, 1).toUpperCase()}</span><div><strong>{siteName}</strong><span>Personal inbox</span></div><ThemeButton dark={dark} onToggle={onToggleTheme} /><IconButton label="退出登录" onClick={onLogout}><LogOut size={16} /></IconButton></div>
     </div>
   </div>
 }

@@ -5,6 +5,7 @@ services:
     env_file:
       - .env
     environment:
+      SITE_NAME: ${SITE_NAME:-Mailpass}
       MAIL_DOMAINS: ${MAIL_DOMAINS:?MAIL_DOMAINS must be set in .env}
       DATABASE_PATH: /data/tempmail.db
       SMTP_HOST: 0.0.0.0

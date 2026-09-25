@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ArrowDown, AtSign, ChevronRight, CircleAlert, Copy, Inbox, LoaderCircle, Mail, PanelLeft, Paperclip, Plus, RefreshCw, Search, Trash2, X } from 'lucide-react'
 import type { MessageDetail as MailMessageDetail, MessageSummary, ToastState, Notify } from './lib'
-import { cn, copyText, formatDate, PAGE_SIZE, readStorage, senderInfo, writeStorage } from './lib'
+import { API, cn, copyText, formatDate, PAGE_SIZE, readStorage, senderInfo, writeStorage } from './lib'
 import { useInbox } from './useInbox'
 import AddressDialog from './components/AddressDialog'
 import Login from './components/Login'
@@ -12,6 +12,7 @@ import { Avatar, Dialog, EmptyState, IconButton, LoadingState, ThemeButton, Toas
 export default function App() {
   const [accessKey, setAccessKey] = useState<string>(() => readStorage('sessionStorage', 'tempmail-access-key'))
   const [dark, setDark] = useState(() => readStorage('localStorage', 'tempmail-theme', window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') === 'dark')
+  const [siteName, setSiteName] = useState('Mailpass')
   const [toast, setToast] = useState<ToastState | null>(null)
   const toastTimer = useRef<number | undefined>(undefined)
   useEffect(() => {
@@ -19,6 +20,12 @@ export default function App() {
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#17191d' : '#f5f6f8')
     writeStorage('localStorage', 'tempmail-theme', dark ? 'dark' : 'light')
   }, [dark])
+  useEffect(() => {
+    fetch(`${API}/health`).then((response) => response.ok ? response.json() : null).then((payload) => {
+      if (payload?.site_name) setSiteName(payload.site_name)
+    }).catch(() => undefined)
+  }, [])
+  useEffect(() => { document.title = siteName }, [siteName])
   useEffect(() => () => window.clearTimeout(toastTimer.current), [])
   const notify: Notify = useCallback((message: string, error = false) => {
     window.clearTimeout(toastTimer.current)
@@ -28,11 +35,11 @@ export default function App() {
   const onLogout = useCallback(() => { writeStorage('sessionStorage', 'tempmail-access-key', null); setAccessKey('') }, [])
   const onAuthenticated = useCallback((key: string, remember: boolean) => { writeStorage('sessionStorage', 'tempmail-access-key', key); writeStorage('localStorage', 'tempmail-remember-key', remember ? key : null); setAccessKey(key) }, [])
   const onToggleTheme = () => setDark((value) => !value)
-  return <>{accessKey ? <Workspace accessKey={accessKey} onLogout={onLogout} dark={dark} onToggleTheme={onToggleTheme} notify={notify} /> : <Login onAuthenticated={onAuthenticated} dark={dark} onToggleTheme={onToggleTheme} />}<Toast toast={toast} /></>
+  return <>{accessKey ? <Workspace accessKey={accessKey} onLogout={onLogout} dark={dark} onToggleTheme={onToggleTheme} notify={notify} siteName={siteName} /> : <Login onAuthenticated={onAuthenticated} dark={dark} onToggleTheme={onToggleTheme} siteName={siteName} />}<Toast toast={toast} /></>
 }
 
-interface WorkspaceProps { accessKey: string; onLogout: () => void; dark: boolean; onToggleTheme: () => void; notify: Notify }
-function Workspace({ accessKey, onLogout, dark, onToggleTheme, notify }: WorkspaceProps) {
+interface WorkspaceProps { accessKey: string; onLogout: () => void; dark: boolean; onToggleTheme: () => void; notify: Notify; siteName: string }
+function Workspace({ accessKey, onLogout, dark, onToggleTheme, notify, siteName }: WorkspaceProps) {
   const [query, setQuery] = useState('')
   const [search, setSearch] = useState('')
   const [address, setAddress] = useState('')
@@ -135,14 +142,14 @@ function Workspace({ accessKey, onLogout, dark, onToggleTheme, notify }: Workspa
     } catch (error) { notify(error.message, true) }
     finally { setBusy(false) }
   }
-  const sidebarProps = { data, address, unreadOnly, onNavigate: navigate, onLogout, dark, onToggleTheme }
+  const sidebarProps = { data, address, unreadOnly, onNavigate: navigate, onLogout, dark, onToggleTheme, siteName }
   const pageTitle = address ? address.split('@')[0] : unreadOnly ? '未读邮件' : '收件箱'
 
   return <div className="workspace">
     <a className="skip-link" href="#mailbox">跳至邮件列表</a>
     <aside className="sidebar"><Sidebar {...sidebarProps} /></aside>
     <main className="workspace-main">
-      <header className="topbar"><div className="breadcrumb"><IconButton label="打开导航" className="mobile-menu" onClick={() => setMobileNav(true)}><PanelLeft size={20} /></IconButton><span className="breadcrumb-home">Workspace</span><ChevronRight className="breadcrumb-chevron" size={14} /><strong>Mail management</strong><span className="private-badge">Private</span></div><div className="topbar-right"><span className="connection-label"><span className={cn('status-dot', (data.error || !data.config.smtp_enabled) && 'status-muted')} />{data.error ? '连接中断' : data.config.smtp_enabled ? '收件服务已启用' : data.lastUpdated ? '收件服务已暂停' : '正在连接'}</span><ThemeButton dark={dark} onToggle={onToggleTheme} /><span className="topbar-avatar" aria-label="当前工作空间：Mailpass">M</span></div></header>
+      <header className="topbar"><div className="breadcrumb"><IconButton label="打开导航" className="mobile-menu" onClick={() => setMobileNav(true)}><PanelLeft size={20} /></IconButton><span className="breadcrumb-home">Workspace</span><ChevronRight className="breadcrumb-chevron" size={14} /><strong>Mail management</strong><span className="private-badge">Private</span></div><div className="topbar-right"><span className="connection-label"><span className={cn('status-dot', (data.error || !data.config.smtp_enabled) && 'status-muted')} />{data.error ? '连接中断' : data.config.smtp_enabled ? '收件服务已启用' : data.lastUpdated ? '收件服务已暂停' : '正在连接'}</span><ThemeButton dark={dark} onToggle={onToggleTheme} /><span className="topbar-avatar" aria-label={`当前工作空间：${siteName}`}>{siteName.slice(0, 1).toUpperCase()}</span></div></header>
       <div className="workspace-body">
         <section className="page-heading"><div><div className="eyebrow">MAIL OVERVIEW</div><h1 title={address || undefined}>{pageTitle}<span className="heading-dot">.</span></h1><p>{address ? address : '每一封来信，尽在掌握。'}</p></div><button className="button button-primary new-address-button" onClick={() => setAddressDialog(true)} disabled={!data.config.domains?.length}><Plus size={17} /><span>新建收件地址</span></button></section>
         <section className="overview" aria-label="邮箱概览"><button className={cn('metric', !address && !unreadOnly && 'metric-active')} onClick={() => navigate()}><span className="metric-icon"><Inbox size={20} strokeWidth={1.6} /></span><span className="metric-info"><span>全部邮件</span><strong>{data.allTotal.toLocaleString()}<small>封</small></strong></span><span className="metric-note">所有来信，统一收录</span><ChevronRight size={15} className="metric-arrow" /></button><button className={cn('metric', unreadOnly && 'metric-active')} onClick={() => navigate('', true)}><span className="metric-icon blue"><Mail size={20} strokeWidth={1.6} /></span><span className="metric-info"><span>未读邮件</span><strong>{data.unread.toLocaleString()}<small>封</small></strong></span><span className="metric-note">{data.unread ? '留一点时间，看看新消息' : '所有来信都已阅览'}</span><ChevronRight size={15} className="metric-arrow" /></button><div className="metric"><span className="metric-icon green"><AtSign size={20} strokeWidth={1.6} /></span><span className="metric-info"><span>收件地址</span><strong>{data.addresses.length.toLocaleString()}<small>个</small></strong></span><span className="metric-note">随用随收，自由命名</span></div></section>
@@ -156,7 +163,7 @@ function Workspace({ accessKey, onLogout, dark, onToggleTheme, notify }: Workspa
           </div>
           {selectedId !== null && <MessageDetail key={selectedId} message={selected} loading={detailLoading || (!selected && !detailError)} error={detailError} onRetry={() => setDetailVersion((value) => value + 1)} onClose={() => setSelectedId(null)} onDelete={() => setDeleteDialog(true)} onCopy={copy} onToggleRead={toggleRead} busy={busy} onPrevious={selectedIndex > 0 ? () => setSelectedId(data.items[selectedIndex - 1].id) : undefined} onNext={selectedIndex >= 0 && selectedIndex < data.items.length - 1 ? () => setSelectedId(data.items[selectedIndex + 1].id) : undefined} position={selectedIndex >= 0 ? `本页第 ${selectedIndex + 1} 封` : '已收录'} />}
         </section>
-        <footer className="workspace-footer"><span>Mailpass<span className="footer-separator">/</span>Simple receiving, zero noise.</span><span>{data.lastUpdated ? `上次同步 ${data.lastUpdated.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false })}` : '正在同步…'}</span></footer>
+        <footer className="workspace-footer"><span>{siteName}<span className="footer-separator">/</span>Simple receiving, zero noise.</span><span>{data.lastUpdated ? `上次同步 ${data.lastUpdated.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false })}` : '正在同步…'}</span></footer>
       </div>
     </main>
     {mobileNav && <Dialog title="工作空间" onClose={() => setMobileNav(false)} className="navigation-dialog"><Sidebar {...sidebarProps} /></Dialog>}

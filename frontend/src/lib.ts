@@ -15,7 +15,7 @@ export interface MessageSummary {
 }
 export interface MessageDetail extends MessageSummary { text_body: string; html_body: string }
 export interface AddressStat { address: string; total: number; unread: number }
-export interface MailConfig { domain?: string; domains: string[]; smtp_port?: number; smtp_enabled: boolean }
+export interface MailConfig { site_name: string; domain?: string; domains: string[]; smtp_port?: number; smtp_enabled: boolean }
 export interface InboxData { items: MessageSummary[]; total: number; unread: number; allTotal: number; addresses: AddressStat[]; config: MailConfig }
 export interface ToastState { message: string; error?: boolean }
 export const cn = (...values: Array<string | false | null | undefined>) => values.filter(Boolean).join(' ')

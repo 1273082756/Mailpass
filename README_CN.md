@@ -40,6 +40,7 @@ example.com.       MX   10 mail.example.com.
 | 变量 | 默认值 | 说明 |
 | --- | --- | --- |
 | `MAIL_DOMAINS` | `mail.example.com,example.com` | 接收域名，逗号分隔 |
+| `SITE_NAME` | `Mailpass` | Web 界面和浏览器标题显示的站点名称，留空时默认使用 `Mailpass` |
 | `ACCESS_KEY` | 自动生成 | Web/API 访问密钥，留空时自动生成 |
 | `WEB_PORT` | `8080` | Web 映射端口 |
 | `SMTP_PORT` | `25` | SMTP 映射端口 |

@@ -4,7 +4,7 @@ import { API, PAGE_SIZE } from './lib'
 
 interface UseInboxProps { accessKey: string; onLogout: () => void; query: string; address: string; unreadOnly: boolean; page: number }
 export function useInbox({ accessKey, onLogout, query, address, unreadOnly, page }: UseInboxProps) {
-  const [data, setData] = useState<InboxData>({ items: [], total: 0, unread: 0, allTotal: 0, addresses: [], config: { domains: [], smtp_enabled: false } })
+  const [data, setData] = useState<InboxData>({ items: [], total: 0, unread: 0, allTotal: 0, addresses: [], config: { site_name: 'Mailpass', domains: [], smtp_enabled: false } })
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState('')

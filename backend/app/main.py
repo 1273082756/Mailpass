@@ -39,6 +39,7 @@ MAIL_DOMAINS = tuple(
 )
 if not MAIL_DOMAINS:
     MAIL_DOMAINS = ("mail.example.com", "example.com")
+SITE_NAME = os.getenv("SITE_NAME", "Mailpass").strip() or "Mailpass"
 DB_PATH = Path(os.getenv("DATABASE_PATH", "/data/tempmail.db"))
 SMTP_HOST = os.getenv("SMTP_HOST", "0.0.0.0")
 SMTP_PORT = int(os.getenv("SMTP_PORT", "2525"))
@@ -321,7 +322,7 @@ class AccessKeyRequest(BaseModel):
 
 @app.get("/api/health")
 def health() -> dict[str, Any]:
-    return {"status": "ok", "domain": MAIL_DOMAINS[0], "domains": list(MAIL_DOMAINS), "smtp_enabled": SMTP_ENABLED, "access_key_configured": bool(ACCESS_KEY)}
+    return {"status": "ok", "site_name": SITE_NAME, "domain": MAIL_DOMAINS[0], "domains": list(MAIL_DOMAINS), "smtp_enabled": SMTP_ENABLED, "access_key_configured": bool(ACCESS_KEY)}
 
 
 @app.post("/api/auth/verify")
@@ -335,7 +336,7 @@ def verify_access_key(payload: AccessKeyRequest) -> dict[str, bool]:
 
 @app.get("/api/config")
 def config() -> dict[str, Any]:
-    return {"domain": MAIL_DOMAINS[0], "domains": list(MAIL_DOMAINS), "smtp_port": SMTP_PORT, "smtp_enabled": SMTP_ENABLED}
+    return {"site_name": SITE_NAME, "domain": MAIL_DOMAINS[0], "domains": list(MAIL_DOMAINS), "smtp_port": SMTP_PORT, "smtp_enabled": SMTP_ENABLED}
 
 
 @app.get("/api/messages")

@@ -44,7 +44,7 @@ svg { flex-shrink: 0; }
 .brand { display: flex; align-items: center; gap: 11px; }
 .brand-icon { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: #292f39; color: #fff; border: 1px solid #ffffff12; border-radius: 10px; box-shadow: 0 2px 3px #15233215, inset 0 1px #ffffff15; }
 .dark .brand-icon { background: #e3e7ef; color: #292f39; }
-.brand-name { display: flex; flex-direction: column; gap: 4px; font-size: 15px; font-weight: 650; letter-spacing: 1px; }
+.brand-name { display: flex; min-width: 0; max-width: 145px; flex-direction: column; gap: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; font-weight: 650; letter-spacing: 1px; }
 .brand-name > span { font-size: 9px; font-weight: 500; color: var(--muted); letter-spacing: 1.5px; }
 .workspace { display: flex; height: 100vh; height: 100dvh; overflow: hidden; }
 .sidebar { flex: 0 0 224px; width: 224px; background: var(--sidebar); border-right: 1px solid var(--line); }

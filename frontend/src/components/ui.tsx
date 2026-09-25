@@ -8,8 +8,8 @@ export function IconButton({ label, children, className, type = 'button', ...pro
   return <button type={type} className={cn('icon-button', className)} aria-label={label} title={label} {...props}>{children}</button>
 }
 
-export function Brand({ compact = false }: { compact?: boolean }) {
-  return <div className="brand"><span className="brand-icon"><Mail size={21} strokeWidth={1.7} /></span>{!compact && <span className="brand-name">Mailpass<span>RECEIVE-ONLY MAIL</span></span>}</div>
+export function Brand({ compact = false, name = 'Mailpass' }: { compact?: boolean; name?: string }) {
+  return <div className="brand"><span className="brand-icon"><Mail size={21} strokeWidth={1.7} /></span>{!compact && <span className="brand-name" title={name}>{name}<span>RECEIVE-ONLY MAIL</span></span>}</div>
 }
 
 export function ThemeButton({ dark, onToggle }: { dark: boolean; onToggle: () => void }) {
